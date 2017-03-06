@@ -59,7 +59,7 @@ public struct Decoration {
         }
     }
     
-    private func toDictionary() -> [String: Any] {
+    public func toDictionary() -> [String: Any] {
         var retVal = [
             Decoration.versionKey: version,
             Decoration.titleKey: title

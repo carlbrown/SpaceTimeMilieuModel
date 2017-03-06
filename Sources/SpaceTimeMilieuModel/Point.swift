@@ -88,7 +88,10 @@ public struct Point {
         
     }
     
-    private func toDictionary(_ dateFormatter: DateFormatter) -> [String: Any] {
+    public func toDictionary(_ dateFormatter: DateFormatter = DateFormatter()) -> [String: Any] {
+        if (dateFormatter.dateFormat != Point.iso8601Format) {
+            dateFormatter.dateFormat = Point.iso8601Format
+        }
         return [
             Point.latitudeDegreesKey: latitudeDegrees,
             Point.latitudeHemisphereKey: latitudeHemisphere.rawValue,
