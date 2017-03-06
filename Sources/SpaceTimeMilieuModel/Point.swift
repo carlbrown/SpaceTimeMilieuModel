@@ -9,6 +9,8 @@
 import Foundation
 
 public struct Point {
+    public static let pointKey = "pointKey"
+
     private static let latitudeDegreesKey = "latitudeDegreesKey"
     private static let latitudeHemisphereKey = "latitudeHemisphereKey"
     private static let longitudeDegreesKey = "longitudeDegreesKey"
@@ -17,6 +19,7 @@ public struct Point {
     private static let timezoneKey = "timezoneKey"
     private static let versionKey = "versionKey"
     private static let iso8601Format = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+    
     private static let currentVersion = 1
 
     

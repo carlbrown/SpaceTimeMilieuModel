@@ -9,6 +9,8 @@
 import Foundation
 
 public struct Decoration {
+    public static let decorationKey = "decorationKey"
+
     private static let titleKey = "titleKey"
     private static let descriptionKey = "descriptionKey"
     private static let urlKey = "urlKey"
