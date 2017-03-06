@@ -88,6 +88,35 @@ public struct Point {
         
     }
     
+    public init?(fromDict dict: [String: Any], dateFormatter: DateFormatter = DateFormatter()) {
+        if (dateFormatter.dateFormat != Point.iso8601Format) {
+            dateFormatter.dateFormat = Point.iso8601Format
+        }
+        guard
+            let lat = dict[Point.latitudeDegreesKey] as? Double,
+            let long = dict[Point.longitudeDegreesKey] as? Double,
+            let latHemiString = dict[Point.latitudeHemisphereKey] as? String,
+            let latitudeHemisphere = Point.LatitudeHemisphereEnum(rawValue: latHemiString),
+            let longHemiString = dict[Point.longitudeHemisphereKey] as? String,
+            let longitudeHemisphere = Point.LongitudeHemisphereEnum(rawValue: longHemiString),
+            let datetimeString = dict[Point.datetimeKey] as? String,
+            let datetime = dateFormatter.date(from: datetimeString),
+            let timezone = dict[Point.timezoneKey] as? String,
+            let version = dict[Point.versionKey] as? Int,
+            version == Point.currentVersion
+            else {
+                print ("Invalid Dictionary: \(dict)")
+                return nil
+        }
+        latitudeDegrees = lat
+        self.latitudeHemisphere = latitudeHemisphere
+        longitudeDegrees = long
+        self.longitudeHemisphere = longitudeHemisphere
+        self.datetime = datetime
+        self.timezone = timezone
+        self.version = version
+    }
+    
     public func toDictionary(_ dateFormatter: DateFormatter = DateFormatter()) -> [String: Any] {
         if (dateFormatter.dateFormat != Point.iso8601Format) {
             dateFormatter.dateFormat = Point.iso8601Format

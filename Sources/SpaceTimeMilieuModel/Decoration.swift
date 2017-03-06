@@ -59,6 +59,25 @@ public struct Decoration {
         }
     }
     
+    public init?(fromDict dict: [String: Any]) {
+        guard
+            let title = dict[Decoration.titleKey] as? String,
+            let version = dict[Decoration.versionKey] as? Int,
+            version == Decoration.currentVersion
+            else {
+                print ("Invalid Dict: \(dict)")
+                return nil
+        }
+        self.title = title
+        self.version = version
+        self.description = dict[Decoration.descriptionKey] as? String
+        if let urlString = dict[Decoration.urlKey] as? String {
+            self.url = URL(string: urlString)
+        } else {
+            self.url = nil
+        }
+    }
+    
     public func toDictionary() -> [String: Any] {
         var retVal = [
             Decoration.versionKey: version,
