@@ -100,32 +100,6 @@ public struct Decoration {
         self.version = Decoration.currentVersion
     }
     
-    public init?(fromJSON: Data) {
-        self.point = nil
-        do {
-            let obj = try JSONSerialization.jsonObject(with: fromJSON)
-            guard
-                let dict = obj as? [String: Any],
-                let title = dict[Decoration.titleKey] as? String,
-                let version = dict[Decoration.versionKey] as? Int,
-                version == Decoration.currentVersion
-                else {
-                    print ("Invalid JSON: \(fromJSON)")
-                    return nil
-            }
-            self.title = title
-            self.version = version
-            self.description = dict[Decoration.descriptionKey] as? String
-            if let urlString = dict[Decoration.urlKey] as? String {
-                self.url = URL(string: urlString)
-            } else {
-                self.url = nil
-            }
-        } catch {
-            print("\(error)")
-            return nil
-        }
-    }
     
     public init?(fromDict dict: [String: Any], point:Point? = nil) {
         self.point = point
@@ -161,8 +135,4 @@ public struct Decoration {
         return retVal
     }
     
-    public func toJSON() throws -> Data  {
-        return try JSONSerialization.data(withJSONObject: self.toDictionary())
-    }
-
 }

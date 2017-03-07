@@ -74,43 +74,6 @@ public struct Point: Hashable {
         version = Point.currentVersion
     }
     
-    public init?(fromJSON: Data, dateFormatter: DateFormatter = DateFormatter()) {
-        if (dateFormatter.dateFormat != Point.iso8601Format) {
-            dateFormatter.dateFormat = Point.iso8601Format
-        }
-        do {
-            let obj = try JSONSerialization.jsonObject(with: fromJSON)
-            guard
-                let dict = obj as? [String: Any],
-                let lat = dict[Point.latitudeDegreesKey] as? Double,
-                let long = dict[Point.longitudeDegreesKey] as? Double,
-                let latHemiString = dict[Point.latitudeHemisphereKey] as? String,
-                let latitudeHemisphere = Point.LatitudeHemisphereEnum(rawValue: latHemiString),
-                let longHemiString = dict[Point.longitudeHemisphereKey] as? String,
-                let longitudeHemisphere = Point.LongitudeHemisphereEnum(rawValue: longHemiString),
-                let datetimeString = dict[Point.datetimeKey] as? String,
-                let datetime = dateFormatter.date(from: datetimeString),
-                let timezone = dict[Point.timezoneKey] as? String,
-                let version = dict[Point.versionKey] as? Int,
-                version == Point.currentVersion
-            else {
-                    print ("Invalid JSON: \(fromJSON)")
-                    return nil
-            }
-            latitudeDegrees = lat
-            self.latitudeHemisphere = latitudeHemisphere
-            longitudeDegrees = long
-            self.longitudeHemisphere = longitudeHemisphere
-            self.datetime = datetime
-            self.timezone = timezone
-            self.version = version
-        } catch {
-            print("\(error)")
-            return nil
-        }
-        
-    }
-    
     public init?(fromDict dict: [String: Any], dateFormatter: DateFormatter = DateFormatter()) {
         if (dateFormatter.dateFormat != Point.iso8601Format) {
             dateFormatter.dateFormat = Point.iso8601Format
@@ -154,14 +117,7 @@ public struct Point: Hashable {
             Point.versionKey: version
         ]
     }
-    
-    public func toJSON(dateFormatter: DateFormatter = DateFormatter()) throws -> Data  {
-        if (dateFormatter.dateFormat != Point.iso8601Format) {
-            dateFormatter.dateFormat = Point.iso8601Format
-        }
-        return try JSONSerialization.data(withJSONObject: self.toDictionary(dateFormatter))
-    }
-    
+        
     public static func ==(lhs: Point, rhs: Point) -> Bool {
         guard lhs.version == rhs.version else { return false}
         guard lhs.latitudeDegrees == rhs.latitudeDegrees else { return false}
