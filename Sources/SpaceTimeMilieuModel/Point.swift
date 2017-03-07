@@ -165,6 +165,25 @@ public struct Point: Hashable {
         }
         return nil
     }
+    
+    public init(coordinate: CLLocationCoordinate2D, datetime: Date) {
+        latitudeDegrees = coordinate.latitude
+        longitudeDegrees = coordinate.longitude
+        timezone = NSTimeZone.local.identifier
+        if (latitudeDegrees > 0) {
+            latitudeHemisphere = .north
+        } else {
+            latitudeHemisphere = .south
+        }
+        if (longitudeDegrees < 0) {
+            longitudeHemisphere = .west
+        } else {
+            longitudeHemisphere = .east
+        }
+        self.datetime = datetime
+        version = Point.currentVersion
+    }
+
 #endif
     
     
