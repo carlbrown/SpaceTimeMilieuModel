@@ -80,7 +80,7 @@ public struct Decoration {
         for point in dictToEncode.keys {
             if let decorationsForThisPoint = dictToEncode[point] {
                 let pointDict = point.toDictionary(dateFormatter)
-                let decorationsDictArray = decorationsForThisPoint.flatMap {$0.toDictionary()}
+                let decorationsDictArray : [[String: Any]] = decorationsForThisPoint.flatMap {$0.toDictionary()}
                 arrayOfDicts.append([
                     Point.pointKey: pointDict,
                     Decoration.decorationKey: decorationsDictArray
