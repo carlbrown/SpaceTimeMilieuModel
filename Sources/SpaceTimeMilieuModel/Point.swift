@@ -59,7 +59,7 @@ public struct Point: Hashable {
         if (dateFormatter.dateFormat != Point.iso8601Format) {
             dateFormatter.dateFormat = Point.iso8601Format
         }
-        let pointsArray = points.flatMap { $0.toDictionary() }
+        let pointsArray : [[String: Any]] = points.flatMap { $0.toDictionary() }
         let dictToEncode: [String: Any] = [ pointKey: pointsArray ]
         return try JSONSerialization.data(withJSONObject: dictToEncode)
     }
