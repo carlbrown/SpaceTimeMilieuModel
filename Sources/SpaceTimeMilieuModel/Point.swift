@@ -8,7 +8,8 @@
 
 import Foundation
 
-public struct Point {
+public struct Point: Hashable {
+
     public static let pointKey = "pointKey"
 
     private static let latitudeDegreesKey = "latitudeDegreesKey"
@@ -18,10 +19,9 @@ public struct Point {
     private static let datetimeKey = "datetimeKey"
     private static let timezoneKey = "timezoneKey"
     private static let versionKey = "versionKey"
-    private static let iso8601Format = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+    public static let iso8601Format = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
     
     private static let currentVersion = 1
-
     
     public enum LatitudeHemisphereEnum: String {
         case north = "N"
@@ -40,6 +40,29 @@ public struct Point {
     public let timezone: String
     
     public let version: Int
+    
+    public static func decodeJSON(data:Data, dateFormatter: DateFormatter = DateFormatter()) throws -> [Point] {
+        if (dateFormatter.dateFormat != Point.iso8601Format) {
+            dateFormatter.dateFormat = Point.iso8601Format
+        }
+        guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return []
+        }
+        guard let pointArray = dict[pointKey] as? [[String: Any]] else {
+            return []
+        }
+
+        return pointArray.flatMap {Point(fromDict: $0, dateFormatter: dateFormatter)}
+    }
+    
+    public static func encodeJSON(points:[Point], dateFormatter: DateFormatter = DateFormatter()) throws -> Data {
+        if (dateFormatter.dateFormat != Point.iso8601Format) {
+            dateFormatter.dateFormat = Point.iso8601Format
+        }
+        let pointsArray = points.flatMap { $0.toDictionary() }
+        let dictToEncode: [String: Any] = [ pointKey: pointsArray ]
+        return try JSONSerialization.data(withJSONObject: dictToEncode)
+    }
     
     public init(lat: Double, latHemisphere:LatitudeHemisphereEnum, long: Double, longHemisphere: LongitudeHemisphereEnum, datetime: Date, timezone: String) {
         latitudeDegrees = lat
@@ -138,4 +161,23 @@ public struct Point {
         }
         return try JSONSerialization.data(withJSONObject: self.toDictionary(dateFormatter))
     }
+    
+    public static func ==(lhs: Point, rhs: Point) -> Bool {
+        guard lhs.version == rhs.version else { return false}
+        guard lhs.latitudeDegrees == rhs.latitudeDegrees else { return false}
+        guard lhs.latitudeHemisphere == rhs.latitudeHemisphere else { return false}
+        guard lhs.longitudeDegrees == rhs.longitudeDegrees else { return false}
+        guard lhs.longitudeHemisphere == rhs.longitudeHemisphere else { return false}
+        guard lhs.datetime == rhs.datetime else { return false}
+        guard lhs.timezone == rhs.timezone else { return false}
+        
+        return true
+    }
+    
+    public var hashValue: Int {
+        return version.hashValue ^ latitudeDegrees.hashValue ^ latitudeHemisphere.hashValue ^ longitudeDegrees.hashValue ^ longitudeHemisphere.hashValue ^ datetime.hashValue ^
+            timezone.hashValue
+    }
+
+
 }
