@@ -135,4 +135,8 @@ public struct Decoration {
         return retVal
     }
     
+    public static func points(_ decorations:[Decoration]) -> [Point] {
+        return decorations.flatMap {$0.point} as [Point]
+    }
+    
 }

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if os(iOS)
+import CoreLocation
+#endif
 
 public struct Point: Hashable {
 
@@ -65,10 +68,34 @@ public struct Point: Hashable {
     }
     
     public init(lat: Double, latHemisphere:LatitudeHemisphereEnum, long: Double, longHemisphere: LongitudeHemisphereEnum, datetime: Date, timezone: String) {
-        latitudeDegrees = lat
         latitudeHemisphere = latHemisphere
-        longitudeDegrees = long
+        if (latHemisphere == .north) {
+            if (lat > 0) {
+                latitudeDegrees = lat
+            } else {
+                latitudeDegrees = lat * -1.0
+            }
+        } else {
+            if (lat < 0) {
+                latitudeDegrees = lat
+            } else {
+                latitudeDegrees = lat * -1.0
+            }
+        }
         longitudeHemisphere = longHemisphere
+        if (longHemisphere == .west) {
+            if (long < 0) {
+                longitudeDegrees = long
+            } else {
+                longitudeDegrees = long * -1.0
+            }
+        } else {
+            if (long > 0) {
+                longitudeDegrees = long
+            } else {
+                longitudeDegrees = long * -1.0
+            }
+        }
         self.datetime = datetime
         self.timezone = timezone
         version = Point.currentVersion
@@ -117,7 +144,30 @@ public struct Point: Hashable {
             Point.versionKey: version
         ]
     }
-        
+    
+#if os(iOS)
+    public var coordinate:  CLLocationCoordinate2D {
+        return CLLocationCoordinate2DMake(latitudeDegrees, longitudeDegrees)
+    }
+    
+    public static func region(_ points: [Point]) -> (center: CLLocationCoordinate2D, latitudinalDelta: CLLocationDegrees, longitudinalDelta: CLLocationDegrees)? {
+        guard points.count > 0 else {
+            return nil
+        }
+        if let latMin: Double = points.map({$0.latitudeDegrees}).min(),
+            let latMax: Double = points.map({$0.latitudeDegrees}).max(),
+            let longMin: Double = points.map({$0.longitudeDegrees}).min(),
+            let longMax: Double = points.map({$0.longitudeDegrees}).max() {
+            let latDelta: Double = latMax - latMin
+            let longDelta: Double = longMax - longMin
+            let center = CLLocationCoordinate2DMake(latMin + latDelta/2.0, longMin + longDelta / 2.0)
+            return (center, latDelta, longDelta)
+        }
+        return nil
+    }
+#endif
+    
+    
     public static func ==(lhs: Point, rhs: Point) -> Bool {
         guard lhs.version == rhs.version else { return false}
         guard lhs.latitudeDegrees == rhs.latitudeDegrees else { return false}
