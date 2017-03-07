@@ -43,7 +43,7 @@ public struct Point: Hashable {
     public let timezone: String
     
     public let version: Int
-    
+        
     public static func decodeJSON(data:Data, dateFormatter: DateFormatter = DateFormatter()) throws -> [Point] {
         if (dateFormatter.dateFormat != Point.iso8601Format) {
             dateFormatter.dateFormat = Point.iso8601Format

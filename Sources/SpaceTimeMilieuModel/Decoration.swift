@@ -13,7 +13,7 @@ public struct Decoration {
     public static let decorationListKey = "decorationListKey"
 
     private static let titleKey = "titleKey"
-    private static let descriptionKey = "descriptionKey"
+    private static let detailsKey = "detailsKey"
     private static let urlKey = "urlKey"
     private static let versionKey = "versionKey"
 
@@ -23,7 +23,7 @@ public struct Decoration {
     
     public let title: String
     
-    public let description: String?
+    public let details: String?
 
     public let url: URL?
     
@@ -92,9 +92,9 @@ public struct Decoration {
         return resultToSend
     }
     
-    public init(title: String, description: String? = nil, url: URL? = nil, point:Point? = nil) {
+    public init(title: String, details: String? = nil, url: URL? = nil, point:Point? = nil) {
         self.title = title
-        self.description = description
+        self.details = details
         self.url = url
         self.point = point
         self.version = Decoration.currentVersion
@@ -113,7 +113,7 @@ public struct Decoration {
         }
         self.title = title
         self.version = version
-        self.description = dict[Decoration.descriptionKey] as? String
+        self.details = dict[Decoration.detailsKey] as? String
         if let urlString = dict[Decoration.urlKey] as? String {
             self.url = URL(string: urlString)
         } else {
@@ -126,8 +126,8 @@ public struct Decoration {
             Decoration.versionKey: version,
             Decoration.titleKey: title
         ] as [String : Any]
-        if let description = self.description {
-            retVal[Decoration.descriptionKey]=description
+        if let details = self.details {
+            retVal[Decoration.detailsKey]=details
         }
         if let urlString = url?.absoluteString {
             retVal[Decoration.urlKey]=urlString
