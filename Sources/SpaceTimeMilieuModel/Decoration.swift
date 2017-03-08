@@ -15,6 +15,7 @@ public struct Decoration {
     private static let titleKey = "titleKey"
     private static let detailsKey = "detailsKey"
     private static let urlKey = "urlKey"
+    private static let sourceKey = "sourceKey"
     private static let versionKey = "versionKey"
 
     private static let currentVersion = 1
@@ -22,6 +23,8 @@ public struct Decoration {
     public let version: Int
     
     public let title: String
+    
+    public let source: String
     
     public let details: String?
 
@@ -92,8 +95,9 @@ public struct Decoration {
         return resultToSend
     }
     
-    public init(title: String, details: String? = nil, url: URL? = nil, point:Point? = nil) {
+    public init(title: String, source: String, details: String? = nil, url: URL? = nil, point:Point? = nil) {
         self.title = title
+        self.source = source
         self.details = details
         self.url = url
         self.point = point
@@ -105,6 +109,7 @@ public struct Decoration {
         self.point = point
         guard
             let title = dict[Decoration.titleKey] as? String,
+            let source = dict[Decoration.sourceKey] as? String,
             let version = dict[Decoration.versionKey] as? Int,
             version == Decoration.currentVersion
             else {
@@ -112,6 +117,7 @@ public struct Decoration {
                 return nil
         }
         self.title = title
+        self.source = source
         self.version = version
         self.details = dict[Decoration.detailsKey] as? String
         if let urlString = dict[Decoration.urlKey] as? String {
@@ -124,7 +130,8 @@ public struct Decoration {
     public func toDictionary() -> [String: Any] {
         var retVal = [
             Decoration.versionKey: version,
-            Decoration.titleKey: title
+            Decoration.titleKey: title,
+            Decoration.sourceKey: source
         ] as [String : Any]
         if let details = self.details {
             retVal[Decoration.detailsKey]=details
